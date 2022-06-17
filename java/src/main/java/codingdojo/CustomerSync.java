@@ -104,20 +104,7 @@ public class CustomerSync {
         final String externalId = externalCustomer.getExternalId();
         final String companyNumber = externalCustomer.getCompanyNumber();
 
-        CustomerMatches matches = new CustomerMatches();
-        Customer matchByExternalId = customerDataLayer.findByExternalId(externalId);
-        if (matchByExternalId != null) {
-            matches = new CustomerMatches(matchByExternalId);
-            matches.setMatchTerm("ExternalId");
-            Customer matchByMasterId = customerDataLayer.findByMasterExternalId(externalId);
-            if (matchByMasterId != null) matches.addDuplicate(matchByMasterId);
-        } else {
-            Customer matchByCompanyNumber = customerDataLayer.findByCompanyNumber(companyNumber);
-            if (matchByCompanyNumber != null) {
-                matches = new CustomerMatches(matchByCompanyNumber);
-                matches.setMatchTerm("CompanyNumber");
-            }
-        }
+        CustomerMatches matches = createMatches(externalId, companyNumber);
 
         if (matches.getCustomer() != null && !CustomerType.COMPANY.equals(matches.getCustomer().getCustomerType())) {
             throw new ConflictException("Existing customer for externalCustomer " + externalId + " already exists and is not a company");
@@ -142,6 +129,26 @@ public class CustomerSync {
             matches.addDuplicate(null);
         }
 
+        return matches;
+    }
+
+    private CustomerMatches createMatches(String externalId, String companyNumber) {
+        CustomerMatches matches;
+        Customer matchByExternalId = customerDataLayer.findByExternalId(externalId);
+        if (matchByExternalId != null) {
+            matches = new CustomerMatches(matchByExternalId);
+            matches.setMatchTerm("ExternalId");
+            Customer matchByMasterId = customerDataLayer.findByMasterExternalId(externalId);
+            if (matchByMasterId != null) matches.addDuplicate(matchByMasterId);
+        } else {
+            Customer matchByCompanyNumber = customerDataLayer.findByCompanyNumber(companyNumber);
+            if (matchByCompanyNumber != null) {
+                matches = new CustomerMatches(matchByCompanyNumber);
+                matches.setMatchTerm("CompanyNumber");
+            } else {
+                matches = new CustomerMatches();
+            }
+        }
         return matches;
     }
 
