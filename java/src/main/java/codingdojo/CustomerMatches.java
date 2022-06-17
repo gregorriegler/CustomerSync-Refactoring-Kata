@@ -8,6 +8,13 @@ public class CustomerMatches {
     private String matchTerm;
     private Customer customer;
 
+    public CustomerMatches() {
+    }
+
+    public CustomerMatches(Customer customer) {
+        this.customer = customer;
+    }
+
     public Customer getCustomer() {
         return customer;
     }

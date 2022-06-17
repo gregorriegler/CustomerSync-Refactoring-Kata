@@ -107,14 +107,14 @@ public class CustomerSync {
         CustomerMatches matches = new CustomerMatches();
         Customer matchByExternalId = customerDataLayer.findByExternalId(externalId);
         if (matchByExternalId != null) {
-            matches.setCustomer(matchByExternalId);
+            matches = new CustomerMatches(matchByExternalId);
             matches.setMatchTerm("ExternalId");
             Customer matchByMasterId = customerDataLayer.findByMasterExternalId(externalId);
             if (matchByMasterId != null) matches.addDuplicate(matchByMasterId);
         } else {
             Customer matchByCompanyNumber = customerDataLayer.findByCompanyNumber(companyNumber);
             if (matchByCompanyNumber != null) {
-                matches.setCustomer(matchByCompanyNumber);
+                matches = new CustomerMatches(matchByCompanyNumber);
                 matches.setMatchTerm("CompanyNumber");
             }
         }
