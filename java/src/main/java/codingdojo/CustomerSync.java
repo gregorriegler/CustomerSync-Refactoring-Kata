@@ -140,6 +140,7 @@ public class CustomerSync {
             matches.setMatchTerm("ExternalId");
             Customer matchByMasterId = customerDataLayer.findByMasterExternalId(externalId);
             if (matchByMasterId != null) matches.addDuplicate(matchByMasterId);
+            return matches;
         } else {
             Customer matchByCompanyNumber = customerDataLayer.findByCompanyNumber(companyNumber);
             if (matchByCompanyNumber != null) {
